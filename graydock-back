@@ -1,0 +1,27 @@
+#!/bin/bash
+if [[ "$1" == "" ]]
+then
+	echo "Please pass the server address as the first parameter"
+        exit
+fi
+if [[ "$2" == "" ]]
+then
+        echo "Please pass the server port as the second parameter"
+        exit
+fi
+
+while [[ 1 == 1 ]]
+do
+        while read inst
+        do
+          if [[ ! -e "/var/run/graydock/$inst.pid" ]]
+          then
+               docker logs -f "$inst" >> "/var/log/graydock/$inst" &
+               graymessages "$1" "$2" "$inst" &
+               echo $! > "/var/run/graydock/$inst.pid"
+          fi
+          awk -f /usr/local/lib/graydock/clean.awk <(docker ps -q) <(find /var/log/graydock -type f)
+        done <<<"$(docker ps -q -f status=running)"
+        
+	sleep 1
+done

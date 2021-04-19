@@ -1,0 +1,24 @@
+#!/usr/bin/python
+import requests
+import os
+import sys
+from sh import tail
+if (len(sys.argv) < 4):
+   print("Please pass the Graylog server address as the first parameter and the port as the second parameter")
+   sys.exit(1)
+if (sys.argv[1] == ""):
+   print("Please pass the Graylog server address as the first parameter")
+   sys.exit(1)
+if (sys.argv[2] == ""):
+   print("Please pass the Graylog server port as the second parameter")
+   sys.exit(1)
+if (sys.argv[3] == ""):
+   print("Please pass the docker instance id as the third parameter")
+   sys.exit(1)
+osdet=os.uname()
+fil="/var/log/graydock/" + sys.argv[3]
+for f in tail("-f", fil, _iter=True):
+   data = '{"message":"' + f + '", "host": "' + osdet[1] + '", "container_id": "' + sys.argv[3] + '"}'
+   host = "http://" + sys.argv[1] + ":" + sys.argv[2] + "/gelf"
+   r = requests.post(host, data=data)
+  

@@ -1,0 +1,2 @@
+#!/bin/bash
+awk -v proc="$1" '$2 == proc || $3 == proc { system("kill -9 "$2) }' <(ps -ef)

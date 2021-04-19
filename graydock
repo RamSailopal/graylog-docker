@@ -1,0 +1,28 @@
+#!/bin/bash
+if [[ "$1" == "" ]]
+then
+	echo "Please pass either start or stop as a parameter"
+	exit
+fi
+if [[ "$1" == "stop" ]]
+then
+	ps -ef | awk '/var\/log\/graydock/ || /graydock-back/ || /graymessages/ { if ($2 != PROCINFO["pid"]) { system("kill -9 "$2) } }'
+	rm -f /var/log/graydock/*
+	rm -f /var/run/graydock/*
+elif [[ "$1" == "start" ]]
+then
+        if [[ "$2" == "" ]]
+        then
+	   echo "Pass the address of the Graylog server as the second parameter"
+	   exit
+	elif [[ "$3" == "" ]]
+        then
+           echo "Pass the port of the Graylog server as the third parameter"
+           exit
+        else
+	   graydock-back "$2" "$3" &
+        fi
+elif [[ "$1" == "status" ]]
+then
+	ps -ef | awk '/graydock\-back/ { fnd=1 } END { if(fnd==1) { print "Process is running" } else { print "Process is NOT running" } }'
+fi
