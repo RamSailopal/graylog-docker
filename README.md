@@ -4,7 +4,7 @@
 
 A utility that parses docker container logs and sends them to Graylog. 
 
-The utility will automatically when new containers are spawned as well as when containers are destroyed
+The utility runs as a daemon and will automatically adjust to new containers being spawned as well as when containers are destroyed
 
 # Parameters
 
